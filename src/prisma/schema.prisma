@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum TransactionTypes {
+  EXPENSE
+  INCOME
+  TRANSFER
+}
+
+model User {
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  createdAt     DateTime       @default(now())
+  wallets       Wallet[]
+  budgets       BudgetLimit[]
+  transactions  Transaction[]
+  subscriptions Subscription[]
+  Category      Category[]
+}
+
+model Wallet {
+  id           String         @id @default(uuid())
+  userId       String
+  name         String
+  currency     String
+  balance      Decimal        @default(0.00)
+  createdAt    DateTime       @default(now())
+  transactions Transaction[]
+  user         User           @relation(fields: [userId], references: [id])
+  Subscription Subscription[]
+}
+
+model Transaction {
+  id          String           @id @default(uuid())
+  userId      String
+  walletId    String
+  categoryId  String?
+  type        TransactionTypes // 'income' or 'expense' or ...?
+  amount      Decimal
+  currency    String
+  description String?
+  createdAt   DateTime         @default(now())
+  user        User             @relation(fields: [userId], references: [id])
+  wallet      Wallet           @relation(fields: [walletId], references: [id])
+  category    Category?        @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id           String         @id @default(uuid())
+  userId       String?
+  name         String
+  icon         String?
+  createdAt    DateTime       @default(now())
+  transactions Transaction[]
+  BudgetLimit  BudgetLimit[]
+  user         User?          @relation(fields: [userId], references: [id])
+  Subscription Subscription[]
+}
+
+model BudgetLimit {
+  id         String   @id @default(uuid())
+  userId     String
+  categoryId String
+  totalLimit Decimal
+  spent      Decimal  @default(0.00)
+  startDate  DateTime
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+}
+
+model Subscription {
+  id                String    @id @default(uuid())
+  userId            String
+  categoryId        String?
+  walletId          String
+  name              String
+  amount            Decimal
+  currency          String
+  nextBillingDate   DateTime
+  createdAt         DateTime  @default(now())
+  billing_frequency String
+  billing_day       String?
+  billing_weekday   String?
+  user              User      @relation(fields: [userId], references: [id])
+  category          Category? @relation(fields: [categoryId], references: [id])
+  wallet            Wallet    @relation(fields: [walletId], references: [id])
+}
