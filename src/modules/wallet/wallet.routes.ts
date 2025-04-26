@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { WalletService } from './wallet.service';
 import { WalletController } from './wallet.controller';
 import { Request, Response } from 'express';
-import prisma from '@src/config/prismaClient';
+import prisma from '../../config/prismaClient';
 
 const router = Router();
 const walletService = new WalletService(prisma);
