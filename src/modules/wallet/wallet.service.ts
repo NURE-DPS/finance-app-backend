@@ -18,8 +18,4 @@ export class WalletService {
   async findAllWallets(userId: string): Promise<Wallet[]> {
     return this.walletRepository.findAllByUserId(userId);
   }
-
-  async findAllWallets(userId: string): Promise<Wallet[]> {
-    return this.walletRepository.findAllByUserId(userId);
-  }
 }
