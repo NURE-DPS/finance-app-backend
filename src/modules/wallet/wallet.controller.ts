@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { CREATE_WALLET_SCHEMA } from './wallet.types';
 import { WalletService } from './wallet.service';
 
 export class WalletController {
