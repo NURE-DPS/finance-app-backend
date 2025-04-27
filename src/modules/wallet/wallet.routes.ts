@@ -10,15 +10,6 @@ const router = Router();
 const walletService = new WalletService(prisma);
 const controller = new WalletController(walletService);
 
-<<<<<<< Updated upstream
-router.post(
-  '/',
-  validateBody(CREATE_WALLET_SCHEMA),
-  (req: Request, res: Response) => {
-    controller.create(req, res);
-  }
-);
-=======
 router.post('/', verifyAuth, validateBody(CREATE_WALLET_SCHEMA), (req, res) => {
   controller.create(req as AuthenticatedRequest, res);
 });
