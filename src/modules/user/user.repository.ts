@@ -1,9 +1,15 @@
 import { User } from '@prisma/client';
-import { SIGNUP_SCHEMA, SIGNUP_SCHEMA_TYPE } from './user.types';
-import prisma from '@src/config/prismaClient';
+import { CREATE_USER_SCHEMA_TYPE } from './user.types';
+import prisma from '../../config/prismaClient';
 
 export class UserRepository {
-  async createOne(data: SIGNUP_SCHEMA_TYPE): Promise<User> {
-    return await prisma.user.create({data});
+  async createOne(data: {name: string, id: string, email: string}): Promise<User> {
+    return await prisma.user.create({ data });
+  }
+
+  async findOne(userId: string): Promise<User | null> {
+    return await prisma.user.findUnique({
+      where: { id: userId },
+    });
   }
 }
