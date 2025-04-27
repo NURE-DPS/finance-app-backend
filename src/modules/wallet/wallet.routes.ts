@@ -10,6 +10,7 @@ const router = Router();
 const walletService = new WalletService(prisma);
 const controller = new WalletController(walletService);
 
+<<<<<<< Updated upstream
 router.post(
   '/',
   validateBody(CREATE_WALLET_SCHEMA),
@@ -17,5 +18,13 @@ router.post(
     controller.create(req, res);
   }
 );
+=======
+router.post('/', verifyAuth, validateBody(CREATE_WALLET_SCHEMA), (req, res) => {
+  controller.create(req as AuthenticatedRequest, res);
+});
+router.get('/', verifyAuth, (req, res) => {
+  controller.findAllWalletsByUser(req as AuthenticatedRequest, res);
+});
+>>>>>>> Stashed changes
 
 export { router as walletRoutes };
