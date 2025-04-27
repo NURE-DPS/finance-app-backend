@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import { WalletService } from './wallet.service';
+import { AuthenticatedRequest } from '../../types/AuthenticatedRequest';
 
 export class WalletController {
   constructor(private walletService: WalletService) {}
 
-  create = async (req: Request, res: Response) => {
+  create = async (req: AuthenticatedRequest, res: Response) => {
     try {
       return res
         .status(201)

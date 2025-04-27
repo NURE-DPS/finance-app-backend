@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 const CREATE_WALLET_SCHEMA = z.object({
-  userId: z.string(),
   name: z.string(),
   currency: z.string(),
   balance: z.number(),

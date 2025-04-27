@@ -1,3 +1,4 @@
+import { AuthenticatedRequest } from '@src/types/AuthenticatedRequest';
 import supabase from '../../config/supabaseClient';
 import { Request, Response, NextFunction } from 'express';
 
@@ -15,6 +16,13 @@ export const verifyAuth = async (
   if (error || !data?.user)
     return res.status(401).json({ error: 'Invalid token' });
 
-  (req as any).user = data.user; // Attach user to request
+  if (!data.user.email || !data.user.id) {
+    return res.status(401).json({ error: 'User data is incomplete' });
+  }
+
+  (req as any).user = {
+    id: data.user.id,
+  };
+
   next();
 };

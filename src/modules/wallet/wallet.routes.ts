@@ -1,20 +1,24 @@
+import { AuthenticatedRequest } from '../../types/AuthenticatedRequest';
 import { Router } from 'express';
 import { WalletService } from './wallet.service';
 import { WalletController } from './wallet.controller';
-import { Request, Response } from 'express';
-import prisma from '../../config/prismaClient';
 import { validateBody } from '../../middleware/validateBody';
 import { CREATE_WALLET_SCHEMA } from './wallet.types';
+import { verifyAuth } from '../auth/auth.middleware';
+import { WalletRepository } from './wallet.repository';
 
 const router = Router();
-const walletService = new WalletService(prisma);
+const walletRepository = new WalletRepository();
+const walletService = new WalletService(walletRepository);
 const controller = new WalletController(walletService);
 
 router.post('/', verifyAuth, validateBody(CREATE_WALLET_SCHEMA), (req, res) => {
   controller.create(req as AuthenticatedRequest, res);
 });
+
 router.get('/', verifyAuth, (req, res) => {
   controller.findAllWalletsByUser(req as AuthenticatedRequest, res);
 });
+
 
 export { router as walletRoutes };
