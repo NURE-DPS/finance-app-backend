@@ -16,4 +16,9 @@ router.post('/', verifyAuth, validateBody(CREATE_WALLET_SCHEMA), (req, res) => {
   controller.create(req as AuthenticatedRequest, res);
 });
 
+router.get('/', verifyAuth, (req, res) => {
+  controller.findAllWalletsByUser(req as AuthenticatedRequest, res);
+});
+
+
 export { router as walletRoutes };

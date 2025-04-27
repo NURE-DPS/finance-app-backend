@@ -7,10 +7,20 @@ export class WalletController {
 
   create = async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const wallet = await this.walletService.createWallet(req.body, req.user.id);
-      return res.status(201).json(wallet);
+      return res
+        .status(201)
+        .json(await this.walletService.createWallet(req.body, req.user.id));
     } catch (error) {
-      console.error(error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+
+  findAllWalletsByUser = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      return res
+        .status(200)
+        .json(await this.walletService.findAllWallets(req.user.id));
+    } catch (error) {
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   };

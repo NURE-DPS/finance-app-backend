@@ -16,4 +16,10 @@ export class WalletRepository {
       },
     });
   }
+
+  async findAllByUserId(userId: string): Promise<Wallet[]> {
+    return await prisma.wallet.findMany({
+      where: { userId: userId },
+    });
+  }
 }

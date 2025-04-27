@@ -11,4 +11,8 @@ export class WalletService {
   ): Promise<Wallet> {
     return this.walletRepository.createOne(data, userId);
   }
+
+  async findAllWallets(userId: string): Promise<Wallet[]> {
+    return this.walletRepository.findAllByUserId(userId);
+  }
 }
