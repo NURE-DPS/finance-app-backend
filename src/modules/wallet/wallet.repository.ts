@@ -25,9 +25,19 @@ export class WalletRepository {
 
   async findOne(id: string): Promise<Wallet | null> {
     return await prisma.wallet.findUnique({
-      where: {id}
-    })
+      where: { id },
+    });
   }
+
+  async updateOne(
+    id: string,
+    data: Partial<CREATE_WALLET_SCHEMA_TYPE>
+  ): Promise<Wallet> {
+    return await prisma.wallet.update({
+      where: { id },
+      data,
+    });
+  } 
 
   async deleteOne(id: string): Promise<Wallet> {
     return await prisma.wallet.delete({
