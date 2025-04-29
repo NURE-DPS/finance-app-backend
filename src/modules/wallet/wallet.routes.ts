@@ -22,6 +22,10 @@ router.get('/', verifyAuth, (req, res) => {
 
 router.delete('/:id', verifyAuth, (req, res) => {
   controller.delete(req as AuthenticatedRequest, res);
-})
+});
+
+router.put('/:id', verifyAuth, (req, res) => {
+  controller.update(req as AuthenticatedRequest, res);
+});
 
 export { router as walletRoutes };

@@ -25,6 +25,25 @@ export class WalletController {
     }
   };
 
+  update = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const walletId = req.params.id;
+      const updatedWallet = await this.walletService.updateWallet(
+        walletId,
+        req.body,
+        req.user.id
+      );
+      if (!updatedWallet) {
+        return res
+          .status(404)
+          .json({ message: 'Wallet not found or access denied' });
+      }
+      return res.status(200).json(updatedWallet);
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+
   delete = async (req: AuthenticatedRequest, res: Response) => {
     try {
       const walletId = req.params.id;

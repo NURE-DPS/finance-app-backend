@@ -20,6 +20,16 @@ export class WalletService {
     return this.walletRepository.findOne(id);
   }
 
+  async updateWallet(
+    id: string,
+    data: Partial<CREATE_WALLET_SCHEMA_TYPE>,
+    userId: string
+  ): Promise<Wallet | null> {
+    const wallet = await this.walletRepository.findOne(id);
+    if (!wallet || wallet.userId !== userId) return null;
+    return this.walletRepository.updateOne(id, data);
+  }
+
   async deleteWallet(id: string, userId: string): Promise<boolean> {
     const wallet = await this.walletRepository.findOne(id);
     if (!wallet || wallet.userId !== userId) return false;
