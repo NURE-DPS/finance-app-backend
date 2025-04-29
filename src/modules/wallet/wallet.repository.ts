@@ -22,4 +22,16 @@ export class WalletRepository {
       where: { userId: userId },
     });
   }
+
+  async findOne(id: string): Promise<Wallet | null> {
+    return await prisma.wallet.findUnique({
+      where: {id}
+    })
+  }
+
+  async deleteOne(id: string): Promise<Wallet> {
+    return await prisma.wallet.delete({
+      where: { id },
+    });
+  }
 }

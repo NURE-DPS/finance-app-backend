@@ -17,8 +17,11 @@ router.post('/', verifyAuth, validateBody(CREATE_WALLET_SCHEMA), (req, res) => {
 });
 
 router.get('/', verifyAuth, (req, res) => {
-  controller.findAllWalletsByUser(req as AuthenticatedRequest, res);
+  controller.findWalletsByUser(req as AuthenticatedRequest, res);
 });
 
+router.delete('/:id', verifyAuth, (req, res) => {
+  controller.delete(req as AuthenticatedRequest, res);
+})
 
 export { router as walletRoutes };

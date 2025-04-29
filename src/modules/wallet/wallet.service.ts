@@ -15,4 +15,15 @@ export class WalletService {
   async findAllWallets(userId: string): Promise<Wallet[]> {
     return this.walletRepository.findAllByUserId(userId);
   }
+
+  async findWallet(id: string): Promise<Wallet | null> {
+    return this.walletRepository.findOne(id);
+  }
+
+  async deleteWallet(id: string, userId: string): Promise<boolean> {
+    const wallet = await this.walletRepository.findOne(id);
+    if (!wallet || wallet.userId !== userId) return false;
+    await this.walletRepository.deleteOne(id);
+    return true;
+  }
 }
