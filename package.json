@@ -1,11 +1,10 @@
 {
   "name": "finance-app-backend",
-  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/app.ts",
+    "dev": "nodemon --watch src --exec ts-node src/app.ts",
     "build": "tsc",
     "start": "node dist/app.js",
     "test": "jest",

@@ -1,6 +1,6 @@
 import prisma from '../../config/prismaClient';
-import { CREATE_WALLET_SCHEMA_TYPE } from './wallet.types';
-import { Wallet } from '@prisma/client';
+import type { CREATE_WALLET_SCHEMA_TYPE } from './wallet.types';
+import type { Wallet } from '@prisma/client';
 
 export class WalletRepository {
   async createOne(
@@ -31,17 +31,19 @@ export class WalletRepository {
 
   async updateOne(
     id: string,
-    data: Partial<CREATE_WALLET_SCHEMA_TYPE>
-  ): Promise<Wallet> {
+    data: Partial<CREATE_WALLET_SCHEMA_TYPE>,
+    userId: string
+  ): Promise<Wallet | null> {
     return await prisma.wallet.update({
-      where: { id },
+      where: { id, userId },
       data,
     });
-  } 
+  }
 
-  async deleteOne(id: string): Promise<Wallet> {
-    return await prisma.wallet.delete({
-      where: { id },
+  async deleteOne(id: string, userId: string): Promise<number> {
+    const { count } = await prisma.wallet.deleteMany({
+      where: { id, userId },
     });
+    return count;
   }
 }
