@@ -1,28 +1,21 @@
-import { Request, Response } from 'express';
-import { WalletService } from './wallet.service';
-import { AuthenticatedRequest } from '../../types/AuthenticatedRequest';
+import type { Response } from 'express';
+import { Request } from 'express';
+import type { WalletService } from './wallet.service';
+import type { AuthenticatedRequest } from '../../types/AuthenticatedRequest';
 
 export class WalletController {
   constructor(private walletService: WalletService) {}
 
   create = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      return res
-        .status(201)
-        .json(await this.walletService.createWallet(req.body, req.user.id));
-    } catch (error) {
-      return res.status(500).json({ message: 'Internal Server Error' });
-    }
+    res
+      .status(201)
+      .json(await this.walletService.createWallet(req.body, req.user.id));
   };
 
   findWalletsByUser = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      return res
-        .status(200)
-        .json(await this.walletService.findAllWallets(req.user.id));
-    } catch (error) {
-      return res.status(500).json({ message: 'Internal Server Error' });
-    }
+    return res
+      .status(200)
+      .json(await this.walletService.findAllWallets(req.user.id));
   };
 
   update = async (req: AuthenticatedRequest, res: Response) => {

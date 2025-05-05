@@ -16,7 +16,7 @@ describe('WalletController', () => {
   beforeEach(() => {
     walletServiceMock = {
       createWallet: jest.fn(),
-      findAllWallets: jest.fn(), 
+      findAllWallets: jest.fn(),
     };
 
     walletController = new WalletController(walletServiceMock as WalletService);
@@ -59,10 +59,9 @@ describe('WalletController', () => {
       new Error('DB Error')
     );
 
-    await walletController.create(req as AuthenticatedRequest, res as Response);
-
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Internal Server Error' });
+    await expect(
+      walletController.create(req as AuthenticatedRequest, res as Response)
+    ).rejects.toThrow('DB Error');
   });
 
   it('should find all wallets for a user and return 200', async () => {
@@ -89,7 +88,7 @@ describe('WalletController', () => {
       mockWallets
     );
 
-    await walletController.findAllWalletsByUser(
+    await walletController.findWalletsByUser(
       req as AuthenticatedRequest,
       res as Response
     );

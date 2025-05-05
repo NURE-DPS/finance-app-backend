@@ -1,6 +1,6 @@
 import { AuthenticatedRequest } from '@src/types/AuthenticatedRequest';
 import supabase from '../../config/supabaseClient';
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 
 export const verifyAuth = async (
   req: Request,

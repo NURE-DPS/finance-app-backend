@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { verifyAuth } from './auth.middleware';
-import { AuthenticatedRequest } from '@src/types/AuthenticatedRequest';
+import type { AuthenticatedRequest } from '@src/types/AuthenticatedRequest';
 import { UserRepository } from '../user/user.repository';
 import { AuthController } from './auth.controller';
 
