@@ -1,7 +1,7 @@
 import supabase from '../../config/supabaseClient';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 
-import { UserRepository } from '../user/user.repository';
+import type { UserRepository } from '../user/user.repository';
 
 export class AuthController {
   constructor(private userRepository: UserRepository) {}
@@ -15,17 +15,17 @@ export class AuthController {
     });
 
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: 'Unable to create user' });
     }
 
     try {
-      const createdUser = this.userRepository.createOne({
+      const createdUser = await this.userRepository.createOne({
         name: req.body.name,
         id: (data as any).user?.id,
         email: email,
       });
     } catch (err) {
-      return res.status(400).json({message: 'Internal Server Error', err})
+      return res.status(400).json({ error: 'Internal Server Error', err });
     }
 
     return res.status(201).json({ message: 'User created', data });
@@ -40,7 +40,7 @@ export class AuthController {
     });
 
     if (error) {
-      return res.status(401).json({ error: error.message });
+      return res.status(401).json({ error: 'Unable to log in user' });
     }
 
     return res.json({ token: data.session?.access_token, user: data.user });

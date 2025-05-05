@@ -1,6 +1,7 @@
-import { PrismaClient, Wallet } from '@prisma/client';
-import { CREATE_WALLET_SCHEMA_TYPE } from './wallet.types';
-import { WalletRepository } from './wallet.repository';
+import type { Wallet } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { CREATE_WALLET_SCHEMA_TYPE } from './wallet.types';
+import type { WalletRepository } from './wallet.repository';
 
 export class WalletService {
   constructor(private walletRepository: WalletRepository) {}
@@ -24,16 +25,13 @@ export class WalletService {
     id: string,
     data: Partial<CREATE_WALLET_SCHEMA_TYPE>,
     userId: string
-  ): Promise<Wallet | null> {
-    const wallet = await this.walletRepository.findOne(id);
-    if (!wallet || wallet.userId !== userId) return null;
-    return this.walletRepository.updateOne(id, data);
+  ) {
+    const updated = await this.walletRepository.updateOne(id, data, userId);
+    return updated ? updated : null;
   }
 
   async deleteWallet(id: string, userId: string): Promise<boolean> {
-    const wallet = await this.walletRepository.findOne(id);
-    if (!wallet || wallet.userId !== userId) return false;
-    await this.walletRepository.deleteOne(id);
-    return true;
+    const count = await this.walletRepository.deleteOne(id, userId);
+    return count > 0;
   }
 }

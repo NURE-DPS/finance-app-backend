@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { walletRoutes } from './modules/wallet/wallet.routes';
 import { authRoutes } from './modules/auth/auth.routes';
 import cors from 'cors';
+import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
 
@@ -11,9 +12,17 @@ const app = express();
 const PORT = Number(process.env.PORT) || 8000;
 
 app.use(express.json());
+
+const allowedOrigins = process.env.CORS_ORIGINS?.split(',') || [];
+
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -27,6 +36,8 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/wallets', walletRoutes);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log('started');
