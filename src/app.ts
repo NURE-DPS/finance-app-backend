@@ -5,6 +5,7 @@ import { walletRoutes } from './modules/wallet/wallet.routes';
 import { authRoutes } from './modules/auth/auth.routes';
 import cors from 'cors';
 import { errorHandler } from './middleware/errorHandler';
+import { transactionRoutes } from './modules/transaction/transaction.routes';
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/wallets', walletRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 app.use(errorHandler);
 
