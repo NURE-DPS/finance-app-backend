@@ -11,4 +11,22 @@ export class TransactionService {
   ): Promise<Transaction> {
     return this.transactionRepository.createOne(data, userId);
   }
+
+  async getTransactionsByUser(userId: string, page: number, limit: number) {
+    return this.transactionRepository.findManyByUser(userId, page, limit);
+  }
+
+  async getTransactionsByWallet(
+    walletId: string,
+    userId: string,
+    page: number,
+    limit: number
+  ) {
+    return this.transactionRepository.findManyByWallet(
+      walletId,
+      userId,
+      page,
+      limit
+    );
+  }
 }

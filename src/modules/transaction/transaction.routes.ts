@@ -18,5 +18,11 @@ router.post(
   validateSchema(CREATE_TRANSACTION_SCHEMA),
   asyncHandler(controller.create)
 );
+router.get('/', verifyAuth, asyncHandler(controller.findAllByUser));
+router.get(
+  '/wallet/:walletId',
+  verifyAuth,
+  asyncHandler(controller.findByWallet)
+);
 
 export { router as transactionRoutes };

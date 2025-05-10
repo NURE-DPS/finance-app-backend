@@ -47,4 +47,68 @@ describe('TransactionService', () => {
     );
     expect(result).toEqual(mockTransaction);
   });
+
+  it('should get transactions by wallet for a user with pagination', async () => {
+    const walletId = 'wallet123';
+    const userId = 'user123';
+    const page = 1;
+    const limit = 10;
+
+    const mockResult = {
+      data: [{ id: 'tx1' }, { id: 'tx2' }],
+      meta: { total: 2, page, limit, totalPages: 1 },
+    };
+
+    transactionRepositoryMock.findManyByWallet = jest
+      .fn()
+      .mockResolvedValue(mockResult);
+
+    transactionService = new TransactionService(transactionRepositoryMock);
+
+    const result = await transactionService.getTransactionsByWallet(
+      walletId,
+      userId,
+      page,
+      limit
+    );
+
+    expect(transactionRepositoryMock.findManyByWallet).toHaveBeenCalledWith(
+      walletId,
+      userId,
+      page,
+      limit
+    );
+    expect(result).toEqual(mockResult);
+  });
+
+  
+it('should get transactions by user with pagination', async () => {
+  const userId = 'user123';
+  const page = 1;
+  const limit = 10;
+
+  const mockResult = {
+    data: [{ id: 'tx1' }, { id: 'tx2' }],
+    meta: { total: 2, page, limit, totalPages: 1 },
+  };
+
+  transactionRepositoryMock.findManyByUser = jest
+    .fn()
+    .mockResolvedValue(mockResult);
+
+  transactionService = new TransactionService(transactionRepositoryMock);
+
+  const result = await transactionService.getTransactionsByUser(
+    userId,
+    page,
+    limit
+  );
+
+  expect(transactionRepositoryMock.findManyByUser).toHaveBeenCalledWith(
+    userId,
+    page,
+    limit
+  );
+  expect(result).toEqual(mockResult);
+});
 });

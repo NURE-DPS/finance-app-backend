@@ -40,4 +40,65 @@ export class TransactionRepository {
       return transaction;
     });
   }
+
+  async findManyByUser(userId: string, page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    const [transactions, total] = await Promise.all([
+      prisma.transaction.findMany({
+        where: { userId },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.transaction.count({ where: { userId } }),
+    ]);
+
+    return {
+      data: transactions,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async findManyByWallet(
+    walletId: string,
+    userId: string,
+    page: number,
+    limit: number
+  ) {
+    const skip = (page - 1) * limit;
+
+    const [transactions, total] = await Promise.all([
+      prisma.transaction.findMany({
+        where: {
+          walletId,
+          userId,
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.transaction.count({
+        where: {
+          walletId,
+          userId,
+        },
+      }),
+    ]);
+
+    return {
+      data: transactions,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
 }
