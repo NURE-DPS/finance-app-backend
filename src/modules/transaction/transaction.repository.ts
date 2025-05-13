@@ -18,15 +18,11 @@ export class TransactionRepository {
 
       if (!wallet) throw new Error('Wallet not found');
 
-      // Ensure currencies match
-      if (wallet.currency !== data.currency) {
-        throw new Error('Transaction currency must match wallet currency');
-      }
-
       const transaction = await tx.transaction.create({
         data: {
           ...data,
           userId,
+          currency: wallet.currency,
         },
       });
 

@@ -5,8 +5,8 @@ export const CREATE_TRANSACTION_SCHEMA = z.object({
   categoryId: z.string().optional(),
   type: z.enum(['INCOME', 'EXPENSE']),
   amount: z.number(),
-  currency: z.string(),
   description: z.string().optional(),
+  createdAt: z.string()
 });
 
 export type CREATE_TRANSACTION_SCHEMA_TYPE = z.infer<
