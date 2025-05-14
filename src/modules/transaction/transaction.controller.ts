@@ -42,4 +42,31 @@ export class TransactionController {
 
     return res.status(200).json(result);
   };
+
+  update = async (req: AuthenticatedRequest, res: Response) => {
+    const updated = await this.transactionService.updateTransaction(
+      req.params.id,
+      req.body,
+      req.user.id
+    );
+    if (!updated) {
+      return res
+        .status(404)
+        .json({ message: 'Transaction not found or access denied' });
+    }
+    return res.status(200).json(updated);
+  };
+
+  delete = async (req: AuthenticatedRequest, res: Response) => {
+    const deleted = await this.transactionService.deleteTransaction(
+      req.params.id,
+      req.user.id
+    );
+    if (!deleted) {
+      return res
+        .status(404)
+        .json({ message: 'Transaction not found or access denied' });
+    }
+    return res.status(204).send();
+  };
 }

@@ -29,4 +29,16 @@ export class TransactionService {
       limit
     );
   }
+
+  async updateTransaction(
+    id: string,
+    data: Partial<CREATE_TRANSACTION_SCHEMA_TYPE>,
+    userId: string
+  ): Promise<Transaction | null> {
+    return this.transactionRepository.updateOne(id, data, userId);
+  }
+
+  async deleteTransaction(id: string, userId: string): Promise<boolean> {
+    return this.transactionRepository.deleteOne(id, userId);
+  }
 }
