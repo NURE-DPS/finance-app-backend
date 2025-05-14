@@ -97,4 +97,78 @@ export class TransactionRepository {
       },
     };
   }
+
+  async updateOne(
+    id: string,
+    data: Partial<CREATE_TRANSACTION_SCHEMA_TYPE>,
+    userId: string
+  ): Promise<Transaction | null> {
+    return await prisma.$transaction(async (tx) => {
+      const existing = await tx.transaction.findUnique({ where: { id } });
+      if (!existing || existing.userId !== userId) return null;
+
+      const wallet = await tx.wallet.findUnique({
+        where: { id: existing.walletId },
+      });
+      if (!wallet) throw new Error('Wallet not found');
+
+      const oldDelta =
+        existing.type === 'INCOME' ? -existing.amount : existing.amount;
+      await tx.wallet.update({
+        where: { id: wallet.id },
+        data: { balance: new Prisma.Decimal(wallet.balance).plus(oldDelta) },
+      });
+
+      const updated = await tx.transaction.update({
+        where: { id },
+        data,
+      });
+
+      const newDelta =
+        data.type && data.amount
+          ? data.type === 'INCOME'
+            ? data.amount
+            : -data.amount
+          : 0;
+
+      if (data.amount || data.type) {
+        await tx.wallet.update({
+          where: { id: wallet.id },
+          data: {
+            balance: new Prisma.Decimal(wallet.balance)
+              .plus(oldDelta)
+              .plus(newDelta),
+          },
+        });
+      }
+
+      return updated;
+    });
+  }
+
+  async deleteOne(id: string, userId: string): Promise<boolean> {
+    return await prisma.$transaction(async (tx) => {
+      const transaction = await tx.transaction.findUnique({ where: { id } });
+      if (!transaction || transaction.userId !== userId) return false;
+
+      const wallet = await tx.wallet.findUnique({
+        where: { id: transaction.walletId },
+      });
+      if (!wallet) throw new Error('Wallet not found');
+
+      const delta =
+        transaction.type === 'INCOME'
+          ? -transaction.amount
+          : transaction.amount;
+
+      await tx.wallet.update({
+        where: { id: wallet.id },
+        data: { balance: new Prisma.Decimal(wallet.balance).plus(delta) },
+      });
+
+      await tx.transaction.delete({ where: { id } });
+
+      return true;
+    });
+  }
 }

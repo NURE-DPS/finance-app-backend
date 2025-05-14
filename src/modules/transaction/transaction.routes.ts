@@ -24,5 +24,7 @@ router.get(
   verifyAuth,
   asyncHandler(controller.findByWallet)
 );
+router.patch('/:id', verifyAuth, asyncHandler(controller.update));
+router.delete('/:id', verifyAuth, asyncHandler(controller.delete));
 
 export { router as transactionRoutes };
