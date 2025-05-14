@@ -33,6 +33,7 @@ describe('TransactionController', () => {
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
+      send: jest.fn(),
     };
   });
 
@@ -167,5 +168,98 @@ describe('TransactionController', () => {
         res as Response
       )
     ).rejects.toThrow('DB Error');
+  });
+
+  it('should update a transaction and return 200', async () => {
+    const updatedTransaction = { id: 'tx123', amount: 150 };
+
+    (transactionServiceMock.updateTransaction as jest.Mock) = jest
+      .fn()
+      .mockResolvedValue(updatedTransaction);
+
+    req = {
+      params: { id: 'tx123' },
+      body: { amount: 150 },
+      user: { id: 'user123' },
+    };
+
+    await transactionController.update(
+      req as AuthenticatedRequest,
+      res as Response
+    );
+
+    expect(transactionServiceMock.updateTransaction).toHaveBeenCalledWith(
+      'tx123',
+      { amount: 150 },
+      'user123'
+    );
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith(updatedTransaction);
+  });
+
+  it('should return 404 if transaction to update is not found or access denied', async () => {
+    (transactionServiceMock.updateTransaction as jest.Mock) = jest
+      .fn()
+      .mockResolvedValue(null);
+
+    req = {
+      params: { id: 'nonexistent' },
+      body: { amount: 200 },
+      user: { id: 'user123' },
+    };
+
+    await transactionController.update(
+      req as AuthenticatedRequest,
+      res as Response
+    );
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Transaction not found or access denied',
+    });
+  });
+
+  it('should delete a transaction and return 204', async () => {
+    (transactionServiceMock.deleteTransaction as jest.Mock) = jest
+      .fn()
+      .mockResolvedValue(true);
+
+    req = {
+      params: { id: 'tx123' },
+      user: { id: 'user123' },
+    };
+
+    await transactionController.delete(
+      req as AuthenticatedRequest,
+      res as Response
+    );
+
+    expect(transactionServiceMock.deleteTransaction).toHaveBeenCalledWith(
+      'tx123',
+      'user123'
+    );
+    expect(res.status).toHaveBeenCalledWith(204);
+    expect(res.send).toHaveBeenCalled();
+  });
+
+  it('should return 404 if transaction to delete is not found or access denied', async () => {
+    (transactionServiceMock.deleteTransaction as jest.Mock) = jest
+      .fn()
+      .mockResolvedValue(false);
+
+    req = {
+      params: { id: 'nonexistent' },
+      user: { id: 'user123' },
+    };
+
+    await transactionController.delete(
+      req as AuthenticatedRequest,
+      res as Response
+    );
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Transaction not found or access denied',
+    });
   });
 });

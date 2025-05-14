@@ -116,7 +116,7 @@ export class TransactionRepository {
         existing.type === 'INCOME' ? -existing.amount : existing.amount;
       await tx.wallet.update({
         where: { id: wallet.id },
-        data: { balance: wallet.balance + oldDelta },
+        data: { balance: new Prisma.Decimal(wallet.balance).plus(oldDelta) },
       });
 
       const updated = await tx.transaction.update({
@@ -163,7 +163,7 @@ export class TransactionRepository {
 
       await tx.wallet.update({
         where: { id: wallet.id },
-        data: { balance: wallet.balance + delta },
+        data: { balance: new Prisma.Decimal(wallet.balance).plus(delta) },
       });
 
       await tx.transaction.delete({ where: { id } });
