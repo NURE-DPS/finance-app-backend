@@ -7,9 +7,20 @@ export class WalletController {
   constructor(private walletService: WalletService) {}
 
   create = async (req: AuthenticatedRequest, res: Response) => {
-    res
-      .status(201)
-      .json(await this.walletService.createWallet(req.body, req.user.id));
+    try {
+      const wallet = await this.walletService.createWallet(
+        req.body,
+        req.user.id
+      );
+      res.status(201).json(wallet);
+    } catch (error: any) {
+      if (error.message === 'Wallet with this name already exists') {
+        return res
+          .status(409)
+          .json({ message: "Wallet with such name already exists" });
+      }
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
   };
 
   findWalletsByUser = async (req: AuthenticatedRequest, res: Response) => {

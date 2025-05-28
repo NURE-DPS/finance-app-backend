@@ -10,6 +10,13 @@ export class WalletService {
     data: CREATE_WALLET_SCHEMA_TYPE,
     userId: string
   ): Promise<Wallet> {
+    const existing = await this.walletRepository.findByNameForUser(
+      data.name,
+      userId
+    );
+    if (existing) {
+      throw new Error('Wallet with this name already exists');
+    }
     return this.walletRepository.createOne(data, userId);
   }
 
