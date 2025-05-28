@@ -3,6 +3,18 @@ import type { CREATE_WALLET_SCHEMA_TYPE } from './wallet.types';
 import type { Wallet } from '@prisma/client';
 
 export class WalletRepository {
+  async findByNameForUser(
+    name: string,
+    userId: string
+  ): Promise<Wallet | null> {
+    return await prisma.wallet.findFirst({
+      where: {
+        name,
+        userId,
+      },
+    });
+  }
+
   async createOne(
     data: CREATE_WALLET_SCHEMA_TYPE,
     userId: string
