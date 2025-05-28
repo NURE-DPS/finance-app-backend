@@ -15,17 +15,33 @@ export class AuthController {
     });
 
     if (error) {
-      return res.status(400).json({ error: 'Unable to create user' });
+      if (
+        error.message.includes('User already registered') ||
+        error.message.includes('already exists')
+      ) {
+        return res.status(400).json({ error: 'User already registered with such email.' });
+      }
+
+      return res
+        .status(400)
+        .json({ error: 'Unable to create user.' });
     }
 
     try {
-      const createdUser = await this.userRepository.createOne({
+      await this.userRepository.createOne({
         name: req.body.name,
         id: (data as any).user?.id,
-        email: email,
+        email,
       });
-    } catch (err) {
-      return res.status(400).json({ error: 'Internal Server Error', err });
+    } catch (err: any) {
+      // Якщо в userRepository спрацює унікальність email — обробляємо і це
+      if (err.code === 'P2002') {
+        return res
+          .status(400)
+          .json({ error: 'User already registered with such email.' });
+      }
+
+      return res.status(500).json({ error: 'Internal server error.' });
     }
 
     return res.status(201).json({ message: 'User created', data });
