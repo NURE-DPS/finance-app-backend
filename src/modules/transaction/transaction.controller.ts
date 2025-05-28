@@ -6,11 +6,21 @@ export class TransactionController {
   constructor(private transactionService: TransactionService) {}
 
   create = async (req: AuthenticatedRequest, res: Response) => {
-    const newTransaction = await this.transactionService.createTransaction(
-      req.body,
-      req.user.id
-    );
-    return res.status(201).json(newTransaction);
+    try {
+      const newTransaction = await this.transactionService.createTransaction(
+        req.body,
+        req.user.id
+      );
+      return res.status(201).json(newTransaction);
+    } catch (error: any) {
+      if (
+        error.message ===
+        'Your wallet does not have enough funds for this transaction.'
+      ) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
+    }
   };
 
   findAllByUser = async (req: AuthenticatedRequest, res: Response) => {
@@ -44,17 +54,27 @@ export class TransactionController {
   };
 
   update = async (req: AuthenticatedRequest, res: Response) => {
-    const updated = await this.transactionService.updateTransaction(
-      req.params.id,
-      req.body,
-      req.user.id
-    );
-    if (!updated) {
-      return res
-        .status(404)
-        .json({ message: 'Transaction not found or access denied' });
+    try {
+      const updated = await this.transactionService.updateTransaction(
+        req.params.id,
+        req.body,
+        req.user.id
+      );
+      if (!updated) {
+        return res
+          .status(404)
+          .json({ message: 'Transaction not found or access denied' });
+      }
+      return res.status(200).json(updated);
+    } catch (error: any) {
+      if (
+        error.message ===
+        'Your wallet does not have enough funds for this transaction.'
+      ) {
+        return res.status(400).json({ message: error.message });
+      }
+      throw error;
     }
-    return res.status(200).json(updated);
   };
 
   delete = async (req: AuthenticatedRequest, res: Response) => {

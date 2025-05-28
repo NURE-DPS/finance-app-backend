@@ -18,6 +18,14 @@ export class TransactionRepository {
 
       if (!wallet) throw new Error('Wallet not found');
 
+      const newBalance = new Prisma.Decimal(wallet.balance).plus(amountDelta);
+
+      if (newBalance.lessThan(0)) {
+        throw new Error(
+          'Your wallet does not have enough funds for this transaction.'
+        );
+      }
+
       const transaction = await tx.transaction.create({
         data: {
           ...data,
@@ -114,15 +122,8 @@ export class TransactionRepository {
 
       const oldDelta =
         existing.type === 'INCOME' ? -existing.amount : existing.amount;
-      await tx.wallet.update({
-        where: { id: wallet.id },
-        data: { balance: new Prisma.Decimal(wallet.balance).plus(oldDelta) },
-      });
 
-      const updated = await tx.transaction.update({
-        where: { id },
-        data,
-      });
+      const tempBalance = new Prisma.Decimal(wallet.balance).plus(oldDelta);
 
       const newDelta =
         data.type && data.amount
@@ -131,16 +132,25 @@ export class TransactionRepository {
             : -data.amount
           : 0;
 
-      if (data.amount || data.type) {
-        await tx.wallet.update({
-          where: { id: wallet.id },
-          data: {
-            balance: new Prisma.Decimal(wallet.balance)
-              .plus(oldDelta)
-              .plus(newDelta),
-          },
-        });
+      const newBalance = tempBalance.plus(newDelta);
+
+      if ((data.amount || data.type) && newBalance.lessThan(0)) {
+        throw new Error(
+          'Your wallet does not have enough funds for this transaction.'
+        );
       }
+
+      await tx.wallet.update({
+        where: { id: wallet.id },
+        data: {
+          balance: newBalance,
+        },
+      });
+
+      const updated = await tx.transaction.update({
+        where: { id },
+        data,
+      });
 
       return updated;
     });
