@@ -65,6 +65,7 @@ model Category {
   name         String
   icon         String?
   createdAt    DateTime       @default(now())
+  type         String?
   transactions Transaction[]
   BudgetLimit  BudgetLimit[]
   user         User?          @relation(fields: [userId], references: [id])
