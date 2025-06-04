@@ -7,6 +7,7 @@ import cors from 'cors';
 import { errorHandler } from './middleware/errorHandler';
 import { transactionRoutes } from './modules/transaction/transaction.routes';
 import { categoriesRoutes } from './modules/category/category.routes';
+import { reportRoutes } from './modules/report/report.routes';
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/wallets', walletRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/categories', categoriesRoutes);
+app.use('/api/reports', reportRoutes);
 
 app.use(errorHandler);
 
