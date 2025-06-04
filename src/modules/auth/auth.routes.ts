@@ -21,5 +21,7 @@ router.get('/protected', verifyAuth, (req, res) => {
     user: (req as AuthenticatedRequest).user,
   });
 });
+router.post('/google', controller.googleAuth);
+
 
 export { router as authRoutes };

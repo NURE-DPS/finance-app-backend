@@ -17,7 +17,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.7.0",
+  "packageManager": "pnpm@10.11.1",
   "dependencies": {
     "@prisma/client": "^6.5.0",
     "@supabase/supabase-js": "^2.49.3",
